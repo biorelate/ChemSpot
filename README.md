@@ -86,3 +86,16 @@ java -Xmx16G -jar chemspot.jar -c chemicals-test-corpus-27-04-2009-v3.iob.gz -o 
 
 ## Acknowledgements
 We would like to thank Daniel Lowe and Philippe Thomas for many valuable suggestions. 
+
+
+## Development
+
+### Setting up Git
+
+We distribute some client side Git hooks.
+To configure them, run:
+
+```
+git config --global user.email your.name@biorelate.com
+git config core.hooksPath hooks
+```
