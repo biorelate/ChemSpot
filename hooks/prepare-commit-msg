@@ -1,0 +1,25 @@
+#!/bin/sh
+
+# Starts with e.g. "JRA-1234 #time 1d 2h 3m"
+# Note that the time logs need to be specified in decreasing units of time i.e. this is not valid `1m 2d`, but this is `2d 1m`
+# You can only use days, hours and minutes (as many as you like)
+# After specifying the issue key and the time, you can leave any comments you'd like "JRA-1234 #time 1d 2h 3m this is a comment"
+PATTERN="^[A-Z]{3}-[0-9]{1,6}[[:space:]]#time[[:space:]](?:[1-9][0-9]*d[[:space:]](?:2[0-3]|1[0-9]|[1-9])h[[:space:]](?:[1-5][0-9]|[1-9])m|[1-9][0-9]*d[[:space:]](?:(?:2[0-3]|1[0-9]|[1-9])h|(?:[1-5][0-9]|[1-9])m)|(?:2[0-3]|1[0-9]|[1-9])h[[:space:]](?:[1-5][0-9]|[1-9])m|[1-9][0-9]*d|(?:2[0-3]|1[0-9]|[1-9])h|(?:[1-5][0-9]|[1-9])m)"
+
+# Filename containing commit message is provided by Git
+FILE=$1
+
+# echo "File: $FILE"
+
+# Any match will suffice
+MATCHES=`grep -E $PATTERN $FILE`
+
+# Just test return code
+if [ $? = 0  ] ; then
+	# echo Matches: "$MATCHES"
+	exit 0;
+else
+	MESSAGE=`less $FILE`
+	echo "Commit message '$MESSAGE' does not match required pattern"
+	exit 1;
+fi
