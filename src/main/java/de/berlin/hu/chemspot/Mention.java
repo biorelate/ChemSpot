@@ -217,53 +217,13 @@ public class Mention implements Comparable<Object> {
     }
     
     public void setId(ChemicalID type, String id) {
-    	if (id != null && (id.isEmpty() || "null".equals(id))) {
+    	if (id != null && (id.isEmpty() || "null".equals(id) || "NULL".equals(id) || "-1".equals(id))) {
     		id = null;
     	}
-
-        if (ChemicalID.CHID.equals(type) && id != null && !id.startsWith(ChemicalID.CHID.toString() + ":")) {
-            id = ChemicalID.CHID.toString() + ":" + id;
-        }
 
     	if (ChemicalID.CHEBI.equals(type) && id != null && !id.startsWith(ChemicalID.CHEBI.toString() + ":")) {
     		id = ChemicalID.CHEBI.toString() + ":" + id;
     	}
-
-        if (ChemicalID.CAS.equals(type) && id != null && !id.startsWith(ChemicalID.CAS.toString() + ":")) {
-            id = ChemicalID.CAS.toString() + ":" + id;
-        }
-
-        if (ChemicalID.PUBC.equals(type) && id != null && !id.startsWith(ChemicalID.PUBC.toString() + ":")) {
-            id = ChemicalID.PUBC.toString() + ":" + id;
-        }
-
-        if (ChemicalID.PUBS.equals(type) && id != null && !id.startsWith(ChemicalID.PUBS.toString() + ":")) {
-            id = ChemicalID.PUBS.toString() + ":" + id;
-        }
-
-        if (ChemicalID.INCH.equals(type) && id != null && !id.startsWith(ChemicalID.INCH.toString() + ":")) {
-            id = ChemicalID.INCH.toString() + ":" + id;
-        }
-
-        if (ChemicalID.DRUG.equals(type) && id != null && !id.startsWith(ChemicalID.DRUG.toString() + ":")) {
-            id = ChemicalID.DRUG.toString() + ":" + id;
-        }
-
-        if (ChemicalID.HMBD.equals(type) && id != null && !id.startsWith(ChemicalID.HMBD.toString() + ":")) {
-            id = ChemicalID.HMBD.toString() + ":" + id;
-        }
-
-        if (ChemicalID.KEGG.equals(type) && id != null && !id.startsWith(ChemicalID.KEGG.toString() + ":")) {
-            id = ChemicalID.KEGG.toString() + ":" + id;
-        }
-
-        if (ChemicalID.KEGD.equals(type) && id != null && !id.startsWith(ChemicalID.KEGD.toString() + ":")) {
-            id = ChemicalID.KEGD.toString() + ":" + id;
-        }
-
-        if (ChemicalID.MESH.equals(type) && id != null && !id.startsWith(ChemicalID.MESH.toString() + ":")) {
-            id = ChemicalID.MESH.toString() + ":" + id;
-        }
 
         try {
           ids[type.ordinal()] = id != null ? id.trim() : null;
