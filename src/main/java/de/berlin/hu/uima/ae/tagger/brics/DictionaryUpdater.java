@@ -70,11 +70,17 @@ public class DictionaryUpdater {
             "rel"
     ));
     private static final List<String> CHEBI_KEYS = new ArrayList<String>(Arrays.asList(
-            "chebi id",
+            "chebi id", // ChemicalID[1]
             "chebi name",
             "formulae",
-            "inchi",
-            "pubchem database links",
+            "chemidplus database links", // ChemicalID[0]
+            "cas registry numbers", // ChemicalID[2]
+            "pubchem database links", // ChemicalID[3] + ChemicalID[4]
+            "inchi", // ChemicalID[5]
+            "drugbank database links", // ChemicalID[6]
+            "hmdb database links", // ChemicalID[7]
+            "kegg compound database links", // ChemicalID[8]
+            "kegg drug database links", // ChemicalID[9]
             "iupac names",
             "synonyms"
     ));
@@ -400,7 +406,7 @@ public class DictionaryUpdater {
                 continue;
             }
 
-            String chebId = data.get("chebi id").replace("CHEBI:", "");
+            String chebId = data.get("chebi id"); //.replace("CHEBI:", "");
             String name = data.get("chebi name").toLowerCase();
 
             if (chebiMustContainFormula && !(data.containsKey("formulae") && data.get("formulae") != null && !data.get("formulae").isEmpty() && data.get("formulae").length() > 2)) {
@@ -414,14 +420,41 @@ public class DictionaryUpdater {
             }
 
             String[] ids = new String[Constants.ChemicalID.values().length];
-            ids[Constants.ChemicalID.CHEB.ordinal()] = chebId;
+            ids[Constants.ChemicalID.CHEBI.ordinal()] = chebId;
 
             if (data.containsKey("inchi")) {
-                ids[Constants.ChemicalID.INCH.ordinal()] = data.get("inchi");
+                ids[Constants.ChemicalID.INCH.ordinal()] = data.get("inchi").replace("InChI=", Constants.ChemicalID.INCH.toString() + ":");
             }
 
             if (data.containsKey("pubchem database links")) {
-                ids[Constants.ChemicalID.PUBC.ordinal()] = data.get("pubchem database links").split("\\|")[0];
+                for (String id : data.get("pubchem database links").split("\\|")) {
+                    if (id.startsWith("CID")) {
+                        ids[Constants.ChemicalID.PUBC.ordinal()] = id.replace("CID: ", Constants.ChemicalID.PUBC.toString() + ":");
+                    } else if (id.startsWith("SID")) {
+                        ids[Constants.ChemicalID.PUBS.ordinal()] = id.replace("SID: ", Constants.ChemicalID.PUBS.toString() + ":");
+                    }
+                }
+//                ids[Constants.ChemicalID.PUBC.ordinal()] = data.get("pubchem database links").split("\\|")[0];
+            }
+
+            if (data.containsKey("cas registry numbers")) {
+                ids[Constants.ChemicalID.CAS.ordinal()] = Constants.ChemicalID.CAS.toString() + ":" + data.get("cas registry numbers");
+            }
+
+            if (data.containsKey("drugbank database links")) {
+                ids[Constants.ChemicalID.DRUG.ordinal()] = Constants.ChemicalID.DRUG.toString() + ":" + data.get("drugbank database links");
+            }
+
+            if (data.containsKey("hmdb database links")) {
+                ids[Constants.ChemicalID.HMBD.ordinal()] = Constants.ChemicalID.HMBD.toString() + ":" + data.get("hmdb database links");
+            }
+
+            if (data.containsKey("kegg compound database links")) {
+                ids[Constants.ChemicalID.KEGG.ordinal()] = Constants.ChemicalID.KEGG.toString() + ":" + data.get("kegg compound database links");
+            }
+
+            if (data.containsKey("kegg drug database links")) {
+                ids[Constants.ChemicalID.KEGD.ordinal()] = Constants.ChemicalID.KEGD.toString() + ":" + data.get("kegg drug database links");
             }
 
             result.put(name, ids);
@@ -622,6 +655,18 @@ public class DictionaryUpdater {
 
         Map<String, String[]> toBeMerged = new HashMap<String, String[]>();
         for (String chemical : chemicals.keySet()) {
+            String[] ids = chemicals.get(chemical);
+            for (int i = 0; i < ChemicalID.values().length; i++) {
+                if (i < ids.length) {
+                    if (ids[i] != null && !ids[i].isEmpty() && !ids[i].contains(":")) {
+                        if (ids[i].startsWith("InChI=")) {
+                            ids[i] = ids[i].replace("InChI=", "");
+                        }
+                        ids[i] = ChemicalID.values()[i].toString() + ":" + ids[i];
+                    }
+                }
+            }
+
             if (!isFilter(chemical)) {
                 String rewrittenChemical = rewriteChemical(chemical);
 
@@ -693,7 +738,9 @@ public class DictionaryUpdater {
                 String id = "";
                 if (type.ordinal() < chemIds.length) {
                     id = chemIds[type.ordinal()];
-                    if (id == null) id = "";
+                    if (id == null) {
+                        id = "";
+                    }
                 }
                 idString += "\t" + id;
             }

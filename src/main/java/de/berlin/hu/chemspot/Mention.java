@@ -107,7 +107,7 @@ public class Mention implements Comparable<Object> {
     }
 
     public String getCHEB() {
-        return getId(ChemicalID.CHEB);
+        return getId(ChemicalID.CHEBI);
     }
 
     public String getCAS() {
@@ -169,7 +169,7 @@ public class Mention implements Comparable<Object> {
     }
 
     public void setCHEB(String id) {
-        setId(ChemicalID.CHEB, id);
+        setId(ChemicalID.CHEBI, id);
     }
 
     public void setCAS(String id) {
@@ -217,14 +217,14 @@ public class Mention implements Comparable<Object> {
     }
     
     public void setId(ChemicalID type, String id) {
-    	if (id != null && (id.isEmpty() || "null".equals(id))) {
+    	if (id != null && (id.isEmpty() || "null".equals(id) || "NULL".equals(id) || "-1".equals(id))) {
     		id = null;
     	}
-    	
-    	if (ChemicalID.CHEB.equals(type) && id != null && !id.startsWith("CHEBI:")) {
-    		id = "CHEBI:" + id;
+
+    	if (ChemicalID.CHEBI.equals(type) && id != null && !id.startsWith(ChemicalID.CHEBI.toString() + ":")) {
+    		id = ChemicalID.CHEBI.toString() + ":" + id;
     	}
-    	
+
         try {
           ids[type.ordinal()] = id != null ? id.trim() : null;
         } catch (ArrayIndexOutOfBoundsException e) {

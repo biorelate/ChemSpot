@@ -6,7 +6,7 @@ package de.berlin.hu.util;
  * Time: 1:44 PM
  */
 public class Constants {
-	public static enum ChemicalID {CHID, CHEB, CAS, PUBC, PUBS, INCH, DRUG, HMBD, KEGG, KEGD, MESH, FDA, FDA_DATE};
+	public static enum ChemicalID {CHID, CHEBI, CAS, PUBC, PUBS, INCH, DRUG, HMBD, KEGG, KEGD, MESH, FDA, FDA_DATE};
 	public static enum ChemicalType {SYSTEMATIC, IDENTIFIER, FORMULA, TRIVIAL, ABBREVIATION, FAMILY, MULTIPLE, UNKNOWN;
 		public static ChemicalType fromString(String s) {
 			if (s == null) {
